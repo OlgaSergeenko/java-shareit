@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ForbiddenAccessException;
 import ru.practicum.shareit.item.dao.ItemDao;
@@ -42,7 +43,8 @@ public class ItemService {
     }
 
     public Set<Item> search(String text) {
-        if (text.isEmpty()) {
+
+        if (StringUtils.isBlank(text)) {
             return Collections.emptySet();
         }
         return itemDao.search(text);

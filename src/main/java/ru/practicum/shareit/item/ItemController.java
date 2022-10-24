@@ -19,44 +19,43 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ItemController {
 
-    private final ItemMapper itemMapper;
     private final ItemService itemService;
 
     @PostMapping
     public ResponseEntity<ItemDto> create(@Valid @RequestBody ItemDto itemDto,
                                           @RequestHeader("X-Sharer-User-Id") long userId) {
-        Item item = itemMapper.toItem(itemDto);
+        Item item = ItemMapper.toItem(itemDto);
         itemService.create(item, userId);
-        return ResponseEntity.ok(itemMapper.toDto(item));
+        return ResponseEntity.ok(ItemMapper.toDto(item));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ItemDto> update(@RequestBody ItemDto itemDto,
                                           @RequestHeader("X-Sharer-User-Id") long userId,
                                           @PathVariable("id") long itemId) {
-        Item item = itemMapper.toItem(itemDto);
+        Item item = ItemMapper.toItem(itemDto);
         item.setId(itemId);
         item = itemService.update(item, userId);
-        return ResponseEntity.ok(itemMapper.toDto(item));
+        return ResponseEntity.ok(ItemMapper.toDto(item));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemDto> getItemById(@PathVariable("id") long itemId) {
         Item item = itemService.getByItemId(itemId);
-        return ResponseEntity.ok(itemMapper.toDto(item));
+        return ResponseEntity.ok(ItemMapper.toDto(item));
     }
 
     @GetMapping()
     public ResponseEntity<List<ItemDto>> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
         return ResponseEntity.ok(itemService.getItemsByUserId(userId).stream()
-                .map(itemMapper::toDto)
+                .map(ItemMapper::toDto)
                 .collect(Collectors.toList()));
     }
 
     @GetMapping("/search")
     public ResponseEntity<Set<ItemDto>> searchItemsByQuery(@RequestParam String text) {
         return ResponseEntity.ok(itemService.search(text).stream()
-                .map(itemMapper::toDto)
+                .map(ItemMapper::toDto)
                 .collect(Collectors.toSet()));
     }
 }

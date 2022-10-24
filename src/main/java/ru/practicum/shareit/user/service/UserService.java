@@ -37,7 +37,7 @@ public class UserService {
     }
 
     private void validateEmail(String email) {
-        if (userDao.getAll().stream().map(User::getEmail).anyMatch((k) -> k.equals(email))) {
+        if (userDao.getAll().stream().map(User::getEmail).anyMatch(k -> k.equals(email))) {
             throw new DuplicateEmailException(String.format("User with email %s is already exist", email));
         }
     }

@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -28,12 +29,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User update(User user, long id) {
         User oldUser = getById(id);
-        if (user.getEmail() != null) {
-            oldUser.setEmail(user.getEmail());
-        }
-        if (user.getName() != null) {
-            oldUser.setName(user.getName());
-        }
+
+        Optional.ofNullable(user.getEmail()).ifPresent(oldUser::setEmail);
+        Optional.ofNullable(user.getName()).ifPresent(oldUser::setName);
+
         return oldUser;
     }
 

@@ -26,24 +26,18 @@ public class ItemDaoImpl implements ItemDao {
     @Override
     public Item update(Item item) {
         Item updatedItem = getByItemId(item.getId());
-        if (item.getName() != null) {
-            updatedItem.setName(item.getName());
-        }
-        if (item.getDescription() != null) {
-            updatedItem.setDescription(item.getDescription());
-        }
-        if (item.getAvailable() != null) {
-            updatedItem.setAvailable(item.getAvailable());
-        }
+
+        Optional.ofNullable(item.getName()).ifPresent(updatedItem::setName);
+        Optional.ofNullable(item.getDescription()).ifPresent(updatedItem::setDescription);
+        Optional.ofNullable(item.getAvailable()).ifPresent(updatedItem::setAvailable);
+
         return updatedItem;
     }
 
     @Override
     public Item getByItemId(long itemId) {
         try {
-            return items.stream()
-                    .filter(item -> item.getId() == itemId)
-                    .findFirst().orElseThrow();
+            return items.stream().filter(item -> item.getId() == itemId).findFirst().orElseThrow();
         } catch (NoSuchElementException e) {
             log.error("No items with id {} is found", itemId);
             throw new ItemNotFoundException("Item is not found");

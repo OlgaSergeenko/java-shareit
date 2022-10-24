@@ -19,33 +19,32 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @PostMapping
     public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto userDto) {
-        User user = userMapper.toUser(userDto);
+        User user = UserMapper.toUser(userDto);
         userService.create(user);
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(UserMapper.toDto(user));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable("id") long userId,
                                           @RequestBody UserDto userDto) {
-        User user = userMapper.toUser(userDto);
+        User user = UserMapper.toUser(userDto);
         User userUpdated = userService.update(user, userId);
-        return ResponseEntity.ok(userMapper.toDto(userUpdated));
+        return ResponseEntity.ok(UserMapper.toDto(userUpdated));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") long userId) {
         User user = userService.getById(userId);
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(UserMapper.toDto(user));
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> findAll() {
         return ResponseEntity.ok(userService.getAll().stream()
-                .map(userMapper::toDto)
+                .map(UserMapper::toDto)
                 .collect(Collectors.toList()));
     }
 
