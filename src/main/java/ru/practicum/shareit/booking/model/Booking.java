@@ -10,7 +10,9 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -27,10 +29,10 @@ public class Booking {
     @Future
     private LocalDateTime end;
     @ManyToOne
-    @JoinColumn(name="item_id", referencedColumnName = "id")
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
     @ManyToOne
-    @JoinColumn(name="booker_id", referencedColumnName = "id")
+    @JoinColumn(name = "booker_id", referencedColumnName = "id")
     private User booker;
     @Enumerated(EnumType.STRING)
     private BookingStatus status;

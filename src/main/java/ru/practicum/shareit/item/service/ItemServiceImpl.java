@@ -45,6 +45,7 @@ public class ItemServiceImpl implements ItemService {
         item.setOwner(UserMapper.toUser(userService.findById(userId)));
         return ItemMapper.toDto(itemRepository.save(item));
     }
+
     @Override
     public ItemDto update(ItemDto itemDto, Long userId, Long itemId) {
         Item item = getItemById(itemId);
@@ -116,13 +117,12 @@ public class ItemServiceImpl implements ItemService {
         if (StringUtils.isBlank(text)) {
             return Collections.emptySet();
         }
-        return
-           itemRepository
-            .findAllByNameContainingIgnoreCaseAndIsAvailableTrueOrDescriptionContainingIgnoreCaseAndAndIsAvailableTrue
-             (text, text)
-                   .stream()
-                   .map(ItemMapper::toDto)
-                   .collect(Collectors.toSet());
+        return itemRepository
+                .findAllByNameContainingIgnoreCaseAndIsAvailableTrueOrDescriptionContainingIgnoreCaseAndAndIsAvailableTrue(
+                        text, text)
+                .stream()
+                .map(ItemMapper::toDto)
+                .collect(Collectors.toSet());
     }
 
     @Override

@@ -102,8 +102,8 @@ public class BookingServiceImpl implements BookingService {
             case ALL:
                 return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdOrderByStartDesc(userId));
             case CURRENT:
-                return BookingMapper.toDtoList(bookingRepository.
-                        findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                return BookingMapper.toDtoList(bookingRepository
+                        .findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
                                 userId, LocalDateTime.now(), LocalDateTime.now()));
             case PAST:
                 return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(
