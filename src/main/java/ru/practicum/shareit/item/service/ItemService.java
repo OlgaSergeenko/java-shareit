@@ -1,52 +1,30 @@
 package ru.practicum.shareit.item.service;
 
-import lombok.AllArgsConstructor;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ForbiddenAccessException;
-import ru.practicum.shareit.item.dao.ItemDao;
+import ru.practicum.shareit.item.comments.Comment;
+import ru.practicum.shareit.item.comments.CommentDto;
+import ru.practicum.shareit.item.dto.ItemBookingCommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.service.UserService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-@Service
-@AllArgsConstructor
-public class ItemService {
+public interface ItemService {
 
-    private final ItemDao itemDao;
-    private final UserService userService;
+    ItemDto create(ItemDto itemDto, Long userId);
 
-    public Item create(Item item, long userId) {
-        userService.getById(userId);
-        item.setOwnerId(userId);
-        return itemDao.create(item);
-    }
+    ItemDto update(ItemDto itemDto, Long userId, Long itemId);
 
-    public Item update(Item item, long userId) {
-        Item itemToUpdate = getByItemId(item.getId());
-        if (itemToUpdate.getOwnerId() != userId) {
-            throw new ForbiddenAccessException("User has no access to edit");
-        }
-        return itemDao.update(item);
-    }
+    ItemBookingCommentDto getByItemId(Long itemId, Long userId);
 
-    public Item getByItemId(long itemId) {
-        return itemDao.getByItemId(itemId);
-    }
 
-    public List<Item> getItemsByUserId(long userId) {
-        userService.getById(userId);
-        return itemDao.getItemsByUserId(userId);
-    }
+    List<ItemBookingCommentDto> getItemsByUserId(Long userId);
 
-    public Set<Item> search(String text) {
+    Set<ItemDto> search(String text);
 
-        if (StringUtils.isBlank(text)) {
-            return Collections.emptySet();
-        }
-        return itemDao.search(text);
-    }
+    CommentDto createComment(CommentDto commentDto, Long userId, Long itemId);
+
+    List<Comment> getAllByItemId(Long itemId);
+
+    Item getItemById(Long itemId);
 }

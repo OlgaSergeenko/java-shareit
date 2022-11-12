@@ -1,55 +1,54 @@
 package ru.practicum.shareit.user;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
 @RequestMapping(path = "/users")
 @AllArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        userService.create(user);
-        return ResponseEntity.ok(UserMapper.toDto(user));
+        UserDto userSaved = userService.create(userDto);
+        log.info(String.format("User with id %d is created", userSaved.getId()));
+        return ResponseEntity.ok(userSaved);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> update(@PathVariable("id") long userId,
+    public ResponseEntity<UserDto> update(@PathVariable("id") Long userId,
                                           @RequestBody UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        User userUpdated = userService.update(user, userId);
-        return ResponseEntity.ok(UserMapper.toDto(userUpdated));
+        UserDto userUpdated = userService.update(userDto, userId);
+        log.info(String.format("User with id %d is updated", userUpdated.getId()));
+        return ResponseEntity.ok(userUpdated);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable("id") long userId) {
-        User user = userService.getById(userId);
-        return ResponseEntity.ok(UserMapper.toDto(user));
+    public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId) {
+        UserDto userFound = userService.findById(userId);
+        log.info(String.format("User with id %d is found", userFound.getId()));
+        return ResponseEntity.ok(userFound);
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> findAll() {
-        return ResponseEntity.ok(userService.getAll().stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(userService.getAll());
     }
 
     @DeleteMapping("/{id}")
-    public void removeUser(@PathVariable("id") long userId) {
+    public void removeUser(@PathVariable("id") Long userId) {
         userService.removeUser(userId);
     }
 }
