@@ -1,44 +1,20 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.DuplicateEmailException;
-import ru.practicum.shareit.user.dao.UserDao;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
-@Service
-@AllArgsConstructor
-public class UserService {
+public interface UserService {
 
-    private final UserDao userDao;
+    UserDto create(UserDto userDto);
 
-    public User create(User user) {
-        validateEmail(user.getEmail());
-        return userDao.create(user);
-    }
+    UserDto update(UserDto userDto, Long id);
 
-    public User update(User user, long id) {
-        validateEmail(user.getEmail());
-        return userDao.update(user, id);
-    }
+    UserDto findById(Long userId);
 
-    public User getById(long userId) {
-        return userDao.getById(userId);
-    }
+    List<UserDto> getAll();
 
-    public List<User> getAll() {
-        return userDao.getAll();
-    }
+    void removeUser(long id);
 
-    public void removeUser(long id) {
-        userDao.removeUser(id);
-    }
-
-    private void validateEmail(String email) {
-        if (userDao.getAll().stream().map(User::getEmail).anyMatch(k -> k.equals(email))) {
-            throw new DuplicateEmailException(String.format("User with email %s is already exist", email));
-        }
-    }
+    UserDto findUserIfExistOrElseThrowNotFound(Long userId);
 }

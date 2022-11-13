@@ -1,61 +1,67 @@
 package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comments.CommentDto;
+import ru.practicum.shareit.item.dto.ItemBookingCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @RestController
 @RequestMapping("/items")
 @AllArgsConstructor
+@Slf4j
 public class ItemController {
 
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
 
     @PostMapping
     public ResponseEntity<ItemDto> create(@Valid @RequestBody ItemDto itemDto,
-                                          @RequestHeader("X-Sharer-User-Id") long userId) {
-        Item item = ItemMapper.toItem(itemDto);
-        itemService.create(item, userId);
-        return ResponseEntity.ok(ItemMapper.toDto(item));
+                                          @RequestHeader("X-Sharer-User-Id") Long userId) {
+        ItemDto itemSaved = itemService.create(itemDto, userId);
+        log.info(String.format("Item with id %d is created", itemSaved.getId()));
+        return ResponseEntity.ok(itemSaved);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ItemDto> update(@RequestBody ItemDto itemDto,
-                                          @RequestHeader("X-Sharer-User-Id") long userId,
-                                          @PathVariable("id") long itemId) {
-        Item item = ItemMapper.toItem(itemDto);
-        item.setId(itemId);
-        item = itemService.update(item, userId);
-        return ResponseEntity.ok(ItemMapper.toDto(item));
+                                          @RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @PathVariable("id") Long itemId) {
+        itemDto = itemService.update(itemDto, userId, itemId);
+        log.info(String.format("Item with id %d is updated", itemDto.getId()));
+        return ResponseEntity.ok(itemDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemDto> getItemById(@PathVariable("id") long itemId) {
-        Item item = itemService.getByItemId(itemId);
-        return ResponseEntity.ok(ItemMapper.toDto(item));
+    public ResponseEntity<ItemBookingCommentDto> getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                             @PathVariable("id") Long itemId) {
+        return ResponseEntity.ok(itemService.getByItemId(itemId, userId));
     }
 
     @GetMapping()
-    public ResponseEntity<List<ItemDto>> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return ResponseEntity.ok(itemService.getItemsByUserId(userId).stream()
-                .map(ItemMapper::toDto)
-                .collect(Collectors.toList()));
+    public ResponseEntity<List<ItemBookingCommentDto>> getItemsByUserId(
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return ResponseEntity.ok(itemService.getItemsByUserId(userId));
     }
 
     @GetMapping("/search")
     public ResponseEntity<Set<ItemDto>> searchItemsByQuery(@RequestParam String text) {
-        return ResponseEntity.ok(itemService.search(text).stream()
-                .map(ItemMapper::toDto)
-                .collect(Collectors.toSet()));
+        return ResponseEntity.ok(itemService.search(text));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDto> createComment(@Valid @RequestBody CommentDto commentDto,
+                                                    @RequestHeader("X-Sharer-User-Id") Long userId,
+                                                    @PathVariable("itemId") Long itemId) {
+        CommentDto commentSaved = itemService.createComment(commentDto, userId, itemId);
+        log.info("Comment created" + commentSaved.getId());
+        return ResponseEntity.ok(commentSaved);
     }
 }
