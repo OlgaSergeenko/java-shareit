@@ -56,4 +56,8 @@ public class UserServiceImpl implements UserService {
     public void removeUser(long id) {
         userRepository.deleteById(id);
     }
+
+    public UserDto findUserIfExistOrElseThrowNotFound(Long userId) {
+        return findById(userId);
+    }
 }

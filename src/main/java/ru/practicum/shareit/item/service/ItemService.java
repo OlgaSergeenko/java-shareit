@@ -17,7 +17,6 @@ public interface ItemService {
 
     ItemBookingCommentDto getByItemId(Long itemId, Long userId);
 
-
     List<ItemBookingCommentDto> getItemsByUserId(Long userId);
 
     Set<ItemDto> search(String text);

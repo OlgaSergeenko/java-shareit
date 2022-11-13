@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemShortDto {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
 }

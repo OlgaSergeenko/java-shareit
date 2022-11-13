@@ -16,11 +16,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "BOOKING", schema = "public")
+@Table(name = "BOOKING")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private long id;
     @Column(name = "start_date", nullable = false)
     @FutureOrPresent
