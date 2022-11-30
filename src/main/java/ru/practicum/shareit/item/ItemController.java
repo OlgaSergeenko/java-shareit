@@ -27,6 +27,9 @@ public class ItemController {
                                           @RequestHeader("X-Sharer-User-Id") Long userId) {
         ItemDto itemSaved = itemService.create(itemDto, userId);
         log.info(String.format("Item with id %d is created", itemSaved.getId()));
+        if (itemDto.getRequestId() != null) {
+            itemSaved.setRequestId(itemDto.getRequestId());
+        }
         return ResponseEntity.ok(itemSaved);
     }
 

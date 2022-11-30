@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -20,6 +22,7 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -30,9 +33,9 @@ import java.util.Optional;
 @Slf4j
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingRepository bookingRepository;
-    private final UserServiceImpl userService;
-    private final ItemService itemService;
+    private BookingRepository bookingRepository;
+    private UserServiceImpl userService;
+    private ItemService itemService;
 
     @Override
     public BookingDto create(BookingDto bookingDto, Long userId) {
@@ -61,7 +64,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto setBookingStatus(Long bookingId, Long userId, boolean approved) {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         if (booking.isEmpty()) {
-            throw new BookingNotFoundException("Booking not found" + bookingId);
+            throw new BookingNotFoundException("Booking not found " + bookingId);
         }
         Booking bookingFound = booking.get();
         if (!checkOwner(bookingFound.getItem().getOwner().getId(), userId)) {
@@ -151,6 +154,18 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
+    }
+
+    @Override
+    public List<BookingDto> findAllByUserId(Long userId, Integer from, Integer size) {
+        Pageable page = PageRequest.of((int)from/size, size);
+        return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdOrderByStartDesc(userId, page));
+    }
+
+    @Override
+    public List<BookingDto> findAllByOwnerId(Long userId, Integer from, Integer size) {
+        Pageable page = PageRequest.of((int)from/size, size);
+        return BookingMapper.toDtoList(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(userId, page));
     }
 
     private void checkDates(LocalDateTime start, LocalDateTime end) {

@@ -29,14 +29,15 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable("id") Long userId,
                                           @RequestBody UserDto userDto) {
-        UserDto userUpdated = userService.update(userDto, userId);
+        userDto.setId(userId);
+        UserDto userUpdated = userService.update(userDto);
         log.info(String.format("User with id %d is updated", userUpdated.getId()));
         return ResponseEntity.ok(userUpdated);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId) {
-        UserDto userFound = userService.findById(userId);
+        UserDto userFound = userService.getById(userId);
         log.info(String.format("User with id %d is found", userFound.getId()));
         return ResponseEntity.ok(userFound);
     }

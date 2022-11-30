@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.item.comments.CommentDto;
 
 import java.util.List;
 
-@Data
+
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemBookingCommentDto {

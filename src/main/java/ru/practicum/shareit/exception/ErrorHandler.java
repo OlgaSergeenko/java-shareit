@@ -14,12 +14,6 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDuplicateEmailException(final DuplicateEmailException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
     @ExceptionHandler(ForbiddenAccessException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenAccessException(final ForbiddenAccessException e) {
@@ -47,6 +41,12 @@ public class ErrorHandler {
     @ExceptionHandler(UnsupportedStatusException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUnsupportedStatusException(final UnsupportedStatusException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(RequestNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleRequestNotFoundException(final RequestNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 }
