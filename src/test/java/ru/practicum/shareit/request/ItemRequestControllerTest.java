@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,12 +31,12 @@ class ItemRequestControllerTest {
     ObjectMapper mapper;
     @MockBean
     ItemRequestService itemRequestService;
-    @Autowired
-    private MockMvc mvc;
     ItemRequestDto itemRequestDto;
     ItemRequestDto itemRequestDtoResponse;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm:ss");
     String created = LocalDateTime.now().plusMinutes(2).format(formatter);
+    @Autowired
+    private MockMvc mvc;
 
     @BeforeEach
     void setUp() {
