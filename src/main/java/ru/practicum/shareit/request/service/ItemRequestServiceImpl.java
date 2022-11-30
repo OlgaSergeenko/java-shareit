@@ -2,7 +2,6 @@ package ru.practicum.shareit.request.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import ru.practicum.shareit.request.ItemRequestRepository.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.dto.UserShortDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -28,7 +26,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
     private final UserService userService;
 
-    public ItemRequestDto create (ItemRequestDto itemRequestDto, Long userId) {
+    public ItemRequestDto create(ItemRequestDto itemRequestDto, Long userId) {
         userService.findUserIfExistOrElseThrowNotFound(userId);
         itemRequestDto.setCreated(LocalDateTime.now());
         ItemRequest itemRequest = ItemRequestMapper.toItemRequestNoItems(itemRequestDto, userId);
@@ -42,13 +40,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return mapToDtoRequestsWithItemsAndWithout(requests);
     }
 
-
-
     @Override
     public ItemRequestDto getByItemRequestId(Long userId, Long id) {
         userService.findUserIfExistOrElseThrowNotFound(userId);
         Optional<ItemRequest> request = itemRequestRepository.findById(id);
-        if(request.isEmpty()) {
+        if (request.isEmpty()) {
             throw new RequestNotFoundException(String.format("Request %d not found", id));
         }
         ItemRequest requestFound = request.get();
@@ -60,7 +56,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findAllByRequestorIdNot(Long userId, Integer from, Integer size) {
-        Pageable page = PageRequest.of(from/size, size);
+        Pageable page = PageRequest.of(from / size, size);
         List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdNotOrderByCreatedDesc(userId, page);
         return mapToDtoRequestsWithItemsAndWithout(requests);
     }
@@ -81,5 +77,4 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         totalRequests.addAll(requestWithItems);
         return totalRequests;
     }
-
 }

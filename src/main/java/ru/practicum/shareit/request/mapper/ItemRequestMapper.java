@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request.mapper;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -25,7 +24,7 @@ public class ItemRequestMapper {
                 itemRequest.getId(),
                 itemRequest.getDescription(),
                 itemRequest.getCreated(),
-               Collections.emptyList()
+                Collections.emptyList()
         );
     }
 

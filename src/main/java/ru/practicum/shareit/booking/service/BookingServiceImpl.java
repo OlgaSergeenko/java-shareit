@@ -22,7 +22,6 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -158,13 +157,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findAllByUserId(Long userId, Integer from, Integer size) {
-        Pageable page = PageRequest.of((int)from/size, size);
+        Pageable page = PageRequest.of((int) from / size, size);
         return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdOrderByStartDesc(userId, page));
     }
 
     @Override
     public List<BookingDto> findAllByOwnerId(Long userId, Integer from, Integer size) {
-        Pageable page = PageRequest.of((int)from/size, size);
+        Pageable page = PageRequest.of((int) from / size, size);
         return BookingMapper.toDtoList(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(userId, page));
     }
 

@@ -4,30 +4,22 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasProperty;
 
 @Transactional
 @SpringBootTest(
@@ -55,7 +47,6 @@ class UserServiceImplTest {
 
 
     @Test
-
     void testUpdateUserNewName() {
         UserDto userDto = new UserDto(null, "Olga", "Olga@email.com");
         userService.create(userDto);
@@ -93,7 +84,7 @@ class UserServiceImplTest {
 
         final UserNotFoundException exception = Assertions.assertThrows(
                 UserNotFoundException.class,
-                () ->  userService.update(userDtoUpdate));
+                () -> userService.update(userDtoUpdate));
 
         Assertions.assertEquals("User is not found", exception.getMessage());
     }
@@ -118,7 +109,7 @@ class UserServiceImplTest {
 
         final UserNotFoundException exception = Assertions.assertThrows(
                 UserNotFoundException.class,
-                () ->  userService.getById(99L));
+                () -> userService.getById(99L));
 
         Assertions.assertEquals("User is not found", exception.getMessage());
 
@@ -126,7 +117,6 @@ class UserServiceImplTest {
 
     @Test
     void getAll() {
-        // given
         List<UserDto> sourceUsers = List.of(
                 new UserDto(1L, "Olga", "olga@mail.ru"),
                 new UserDto(2L, "Pasha", "pasha@mail.ru")
@@ -140,7 +130,7 @@ class UserServiceImplTest {
 
         assertThat(targetUsers, hasSize(sourceUsers.size()));
         for (UserDto sourceUser : sourceUsers) {
-            assertThat(targetUsers, hasItem( allOf(
+            assertThat(targetUsers, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("name", equalTo(sourceUser.getName())),
                     hasProperty("email", equalTo(sourceUser.getEmail()))
@@ -164,14 +154,14 @@ class UserServiceImplTest {
 
         final UserNotFoundException exception = Assertions.assertThrows(
                 UserNotFoundException.class,
-                () ->  userService.getById(user.getId()));
+                () -> userService.getById(user.getId()));
 
         Assertions.assertEquals("User is not found", exception.getMessage());
     }
 
     @Test
     @DisplayName("when user exists")
-    void TestFindUserIfExistOrElseThrowNotFound() {
+    void testFindUserIfExistOrElseThrowNotFound() {
         UserDto userDto = new UserDto(null, "Olga", "Olga@email.com");
         UserDto userSaved = userService.create(userDto);
 
@@ -184,10 +174,10 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("when user does not exist")
-    void FindUserIfExistOrElseThrowNotFound() {
+    void findUserIfExistOrElseThrowNotFound() {
         final UserNotFoundException exception = Assertions.assertThrows(
                 UserNotFoundException.class,
-                () ->  userService.findUserIfExistOrElseThrowNotFound(99L));
+                () -> userService.findUserIfExistOrElseThrowNotFound(99L));
 
         Assertions.assertEquals("User is not found", exception.getMessage());
     }

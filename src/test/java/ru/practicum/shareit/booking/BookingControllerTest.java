@@ -33,6 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = BookingController.class)
 class BookingControllerTest {
 
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm:ss");
+    private final String start = LocalDateTime.now().plusMinutes(2).format(formatter);
+    private final String end = LocalDateTime.now().plusDays(2).format(formatter);
     @Autowired
     private ObjectMapper mapper;
     @MockBean
@@ -41,9 +44,6 @@ class BookingControllerTest {
     private MockMvc mvc;
     private BookingDto bookingRequestDto;
     private BookingDto bookingResponseDto;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm:ss");
-    private final String start = LocalDateTime.now().plusMinutes(2).format(formatter);
-    private final String end = LocalDateTime.now().plusDays(2).format(formatter);
 
     @BeforeEach
     void makeBooking() {

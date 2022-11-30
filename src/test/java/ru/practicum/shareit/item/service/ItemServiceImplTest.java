@@ -18,7 +18,6 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.ForbiddenAccessException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UnavailableBookingException;
-import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.comments.Comment;
 import ru.practicum.shareit.item.comments.CommentDto;
 import ru.practicum.shareit.item.comments.CommentRepository;
@@ -115,8 +114,8 @@ class ItemServiceImplTest {
 
     @Test
     void testCreateNewItem() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
         Mockito
                 .when(itemRequestRepository.findById(any()))
@@ -136,8 +135,8 @@ class ItemServiceImplTest {
 
     @Test
     void testCreateNewItemNoRequest() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
         Mockito
                 .when(itemRepository.save(any(Item.class)))
@@ -158,8 +157,8 @@ class ItemServiceImplTest {
                 null, "broken saw", null, false, null, null);
         Item itemUpdated = new Item(
                 1L, "broken saw", "big power", false, user, itemRequest);
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
         Mockito
                 .when(itemRepository.findById(any(Long.class)))
@@ -181,8 +180,8 @@ class ItemServiceImplTest {
     void updateFailWrongUser() {
         ItemDto itemToUpdate = new ItemDto(
                 null, "broken saw", null, false, null, null);
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
         Mockito
                 .when(itemRepository.findById(any(Long.class)))
@@ -190,15 +189,15 @@ class ItemServiceImplTest {
 
         final ForbiddenAccessException exception = Assertions.assertThrows(
                 ForbiddenAccessException.class,
-                () ->  itemService.update(itemToUpdate, 99L, 1L));
+                () -> itemService.update(itemToUpdate, 99L, 1L));
 
         Assertions.assertEquals("User has no access to edit", exception.getMessage());
     }
 
     @Test
     void getByItemId() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
         Mockito
                 .when(itemRepository.findById(any(Long.class)))
@@ -226,8 +225,8 @@ class ItemServiceImplTest {
 
     @Test
     void getItemsByUserId() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
         Mockito
                 .when(itemRepository.findAllByOwnerId(any(Long.class)))
@@ -274,9 +273,9 @@ class ItemServiceImplTest {
         Mockito
                 .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
-                anyLong(), anyLong(), any()))
+        Mockito
+                .when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
+                        anyLong(), anyLong(), any()))
                 .thenReturn(List.of(booking));
         Mockito
                 .when(itemRepository.findById(any(Long.class)))
@@ -296,14 +295,14 @@ class ItemServiceImplTest {
         Mockito
                 .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
+        Mockito
+                .when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
                         anyLong(), anyLong(), any()))
                 .thenReturn(Collections.emptyList());
 
         final UnavailableBookingException exception = Assertions.assertThrows(
                 UnavailableBookingException.class,
-                () ->  itemService.createComment(commentDto, 1L, 1L));
+                () -> itemService.createComment(commentDto, 1L, 1L));
 
         Assertions.assertEquals("User cannot leave a comment without booking", exception.getMessage());
     }
@@ -345,7 +344,7 @@ class ItemServiceImplTest {
 
         final ItemNotFoundException exception = Assertions.assertThrows(
                 ItemNotFoundException.class,
-                () ->  itemService.getItemById(99L));
+                () -> itemService.getItemById(99L));
 
         Assertions.assertEquals("Item not found - id:  + 99", exception.getMessage());
     }

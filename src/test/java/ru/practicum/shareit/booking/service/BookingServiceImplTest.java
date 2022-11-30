@@ -20,7 +20,6 @@ import ru.practicum.shareit.enumerated.BookingStatus;
 import ru.practicum.shareit.exception.BookingNotFoundException;
 import ru.practicum.shareit.exception.UnavailableBookingException;
 import ru.practicum.shareit.exception.UnsupportedStatusException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
@@ -66,7 +65,6 @@ class BookingServiceImplTest {
     private User user;
     private User booker;
     private Item item;
-    private ItemDto itemDto;
     private ItemRequest itemRequest;
     private BookingDto bookingRequestDto;
     private Booking booking;
@@ -77,8 +75,6 @@ class BookingServiceImplTest {
         booker = new User(2L, "Pasha", "Lalal@email.com");
         userDto = new UserDto(1L, "Olga", "Olga@email.com");
         item = new Item(1L, "saw", "big power", true, user, itemRequest);
-        itemDto = new ItemDto(1L, "saw", "big power", true, new UserDto(
-                1L, "Olga", "Olga@email.com"), 1L);
         itemRequest = new ItemRequest(1L, "text", null, null, null);
         bookingRequestDto = BookingDto.builder()
                 .start(LocalDateTime.parse(start, formatter))
@@ -100,11 +96,11 @@ class BookingServiceImplTest {
         Mockito
                 .when(itemService.getItemById(any(Long.class)))
                 .thenReturn(item);
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.save(any(Booking.class)))
+        Mockito
+                .when(bookingRepository.save(any(Booking.class)))
                 .thenReturn(booking);
 
         BookingDto bookingSaved = bookingService.create(bookingRequestDto, 2L);
@@ -158,8 +154,8 @@ class BookingServiceImplTest {
                 .when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.ofNullable(booking));
 
-        Mockito.
-                when(bookingRepository.save(any(Booking.class)))
+        Mockito
+                .when(bookingRepository.save(any(Booking.class)))
                 .thenReturn(bookingApproved);
 
         BookingDto bookingWithStatus = bookingService.setBookingStatus(1L, 1L, true);
@@ -186,8 +182,8 @@ class BookingServiceImplTest {
                 .when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.ofNullable(booking));
 
-        Mockito.
-                when(bookingRepository.save(any(Booking.class)))
+        Mockito
+                .when(bookingRepository.save(any(Booking.class)))
                 .thenReturn(bookingRejected);
 
         BookingDto bookingWithStatus = bookingService.setBookingStatus(1L, 1L, false);
@@ -284,11 +280,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateAll() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong()))
+        Mockito
+                .when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, BookingState.ALL);
@@ -299,11 +295,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateCurrent() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository
+        Mockito
+                .when(bookingRepository
                         .findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
                                 anyLong(), any(), any()))
                 .thenReturn(List.of(booking));
@@ -316,11 +312,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStatePast() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(
+        Mockito
+                .when(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -332,11 +328,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateFuture() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(
+        Mockito
+                .when(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -348,11 +344,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateWaiting() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+        Mockito
+                .when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -364,11 +360,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateRejected() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+        Mockito
+                .when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -380,8 +376,8 @@ class BookingServiceImplTest {
 
     @Test
     void failfindAllByUserIdWithStateUnsupported() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
 
         final UnsupportedStatusException exception = Assertions.assertThrows(
@@ -393,11 +389,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateAll() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(anyLong()))
+        Mockito
+                .when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(anyLong()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, BookingState.ALL);
@@ -408,11 +404,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateCurrent() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository
+        Mockito
+                .when(bookingRepository
                         .findAllByItem_OwnerIdAndStartLessThanEqualAndEndGreaterThanOrderByStart(
                                 anyLong(), any(), any()))
                 .thenReturn(List.of(booking));
@@ -425,11 +421,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStatePast() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByItem_OwnerIdAndEndLessThanEqual(
+        Mockito
+                .when(bookingRepository.findAllByItem_OwnerIdAndEndLessThanEqual(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -441,11 +437,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateFuture() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository .findAllByItem_OwnerIdAndStartGreaterThanEqualOrderByStartDesc(
+        Mockito
+                .when(bookingRepository.findAllByItem_OwnerIdAndStartGreaterThanEqualOrderByStartDesc(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -457,11 +453,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateWaiting() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByItem_OwnerIdAndStatusOrderByStart(
+        Mockito
+                .when(bookingRepository.findAllByItem_OwnerIdAndStatusOrderByStart(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -473,11 +469,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateRejected() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito.
-                when(bookingRepository.findAllByItem_OwnerIdAndStatus(
+        Mockito
+                .when(bookingRepository.findAllByItem_OwnerIdAndStatus(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -489,8 +485,8 @@ class BookingServiceImplTest {
 
     @Test
     void failFindAllByOwnerIdWithStateUnsupported() {
-        Mockito.
-                when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        Mockito
+                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
 
         final UnsupportedStatusException exception = Assertions.assertThrows(
@@ -502,8 +498,8 @@ class BookingServiceImplTest {
 
     @Test
     void testFindAllByUserId() {
-        Mockito.
-                when(bookingRepository.findAllByBookerIdOrderByStartDesc(
+        Mockito
+                .when(bookingRepository.findAllByBookerIdOrderByStartDesc(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
@@ -515,8 +511,8 @@ class BookingServiceImplTest {
 
     @Test
     void testFindAllByOwnerId() {
-        Mockito.
-                when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(
+        Mockito
+                .when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(
                         anyLong(), any()))
                 .thenReturn(List.of(booking));
 
