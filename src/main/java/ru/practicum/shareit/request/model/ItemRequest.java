@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -28,5 +28,6 @@ public class ItemRequest {
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime created;
     @OneToMany(mappedBy = "itemRequest")
+    @ToString.Exclude
     private List<Item> items;
 }
