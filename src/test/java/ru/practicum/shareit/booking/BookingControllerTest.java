@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.service.BookingServiceImpl;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.enumerated.BookingState;
 import ru.practicum.shareit.enumerated.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemShortDto;
@@ -39,7 +39,7 @@ class BookingControllerTest {
     @Autowired
     private ObjectMapper mapper;
     @MockBean
-    private BookingServiceImpl bookingService;
+    private BookingService bookingService;
     @Autowired
     private MockMvc mvc;
     private BookingDto bookingRequestDto;

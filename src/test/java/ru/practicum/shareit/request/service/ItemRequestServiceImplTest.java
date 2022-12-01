@@ -7,16 +7,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.exception.RequestNotFoundException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequestRepository.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -33,6 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
@@ -73,11 +73,9 @@ class ItemRequestServiceImplTest {
 
     @Test
     void create() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(itemRequestRepository.save(any(ItemRequest.class)))
+        when(itemRequestRepository.save(any(ItemRequest.class)))
                 .thenReturn(itemRequest);
 
         ItemRequestDto itemRequestSaved = itemRequestService.create(itemRequestDto, 1L);
@@ -92,8 +90,7 @@ class ItemRequestServiceImplTest {
     void getAllByUserId() {
         Item item = new Item(1L, "saw", "big power", true, user, itemRequest2);
         itemRequest2.setItems(List.of(item));
-        Mockito
-                .when(itemRequestRepository.findAllByRequestorId(anyLong()))
+        when(itemRequestRepository.findAllByRequestorId(anyLong()))
                 .thenReturn(List.of(itemRequest, itemRequest2));
 
         List<ItemRequestDto> requests = itemRequestService.getAllByUserId(2L);
@@ -105,8 +102,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getByItemRequestIdNoItems() {
-        Mockito
-                .when(itemRequestRepository.findById(anyLong()))
+        when(itemRequestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(itemRequest));
 
         ItemRequestDto requestFound = itemRequestService.getByItemRequestId(2L, 1L);
@@ -121,8 +117,7 @@ class ItemRequestServiceImplTest {
     void getByItemRequestIdWithItems() {
         Item item = new Item(1L, "saw", "big power", true, user, itemRequest2);
         itemRequest2.setItems(List.of(item));
-        Mockito
-                .when(itemRequestRepository.findById(anyLong()))
+        when(itemRequestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(itemRequest2));
 
         ItemRequestDto requestFound = itemRequestService.getByItemRequestId(2L, 1L);
@@ -135,8 +130,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void failGetByItemRequestIdNotFound() {
-        Mockito
-                .when(itemRequestRepository.findById(anyLong()))
+        when(itemRequestRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final RequestNotFoundException exception = Assertions.assertThrows(
@@ -150,8 +144,7 @@ class ItemRequestServiceImplTest {
     void findAllByRequestorIdNot() {
         Item item = new Item(1L, "saw", "big power", true, user, itemRequest2);
         itemRequest2.setItems(List.of(item));
-        Mockito
-                .when(itemRequestRepository.findAllByRequestorIdNotOrderByCreatedDesc(anyLong(), any()))
+        when(itemRequestRepository.findAllByRequestorIdNotOrderByCreatedDesc(anyLong(), any()))
                 .thenReturn(List.of(itemRequest, itemRequest2));
 
         List<ItemRequestDto> requests = itemRequestService.findAllByRequestorIdNot(1L, 0, 2);

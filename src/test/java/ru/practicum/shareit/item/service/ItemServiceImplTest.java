@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,8 +24,8 @@ import ru.practicum.shareit.item.dto.ItemBookingCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.ItemRequestRepository.ItemRequestRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -42,6 +41,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
@@ -114,14 +114,11 @@ class ItemServiceImplTest {
 
     @Test
     void testCreateNewItem() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(itemRequestRepository.findById(any()))
+        when(itemRequestRepository.findById(any()))
                 .thenReturn(Optional.of(itemRequest));
-        Mockito
-                .when(itemRepository.save(any(Item.class)))
+        when(itemRepository.save(any(Item.class)))
                 .thenReturn(item);
 
         ItemDto itemSaved = itemService.create(itemDto, 1L);
@@ -135,11 +132,9 @@ class ItemServiceImplTest {
 
     @Test
     void testCreateNewItemNoRequest() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(itemRepository.save(any(Item.class)))
+        when(itemRepository.save(any(Item.class)))
                 .thenReturn(itemNoRequest);
 
         ItemDto itemSaved = itemService.create(itemDtoNoRequest, 1L);
@@ -157,14 +152,11 @@ class ItemServiceImplTest {
                 null, "broken saw", null, false, null, null);
         Item itemUpdated = new Item(
                 1L, "broken saw", "big power", false, user, itemRequest);
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(item));
-        Mockito
-                .when(itemRepository.save(any(Item.class)))
+        when(itemRepository.save(any(Item.class)))
                 .thenReturn(itemUpdated);
 
         ItemDto itemSaved = itemService.update(itemToUpdate, 1L, 1L);
@@ -180,11 +172,9 @@ class ItemServiceImplTest {
     void updateFailWrongUser() {
         ItemDto itemToUpdate = new ItemDto(
                 null, "broken saw", null, false, null, null);
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(item));
 
         final ForbiddenAccessException exception = Assertions.assertThrows(
@@ -196,20 +186,15 @@ class ItemServiceImplTest {
 
     @Test
     void getByItemId() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(item));
-        Mockito
-                .when(bookingRepository.findFirstByItem_Owner_IdAndItem_IdOrderByStart(anyLong(), anyLong()))
+        when(bookingRepository.findFirstByItem_Owner_IdAndItem_IdOrderByStart(anyLong(), anyLong()))
                 .thenReturn(Optional.of(last));
-        Mockito
-                .when(bookingRepository.findFirstByItem_OwnerIdAndIdOrderByStartDesc(anyLong(), anyLong()))
+        when(bookingRepository.findFirstByItem_OwnerIdAndIdOrderByStartDesc(anyLong(), anyLong()))
                 .thenReturn(Optional.of(next));
-        Mockito
-                .when(commentRepository.findAllByItemId(anyLong()))
+        when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(List.of(comment));
 
         ItemBookingCommentDto itemFound = itemService.getByItemId(1L, 1L);
@@ -225,23 +210,17 @@ class ItemServiceImplTest {
 
     @Test
     void getItemsByUserId() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(itemRepository.findAllByOwnerId(any(Long.class)))
+        when(itemRepository.findAllByOwnerId(any(Long.class)))
                 .thenReturn(List.of(item));
-        Mockito
-                .when(bookingRepository.findFirstByItem_Owner_IdAndItem_IdOrderByStart(anyLong(), anyLong()))
+        when(bookingRepository.findFirstByItem_Owner_IdAndItem_IdOrderByStart(anyLong(), anyLong()))
                 .thenReturn(Optional.empty());
-        Mockito
-                .when(bookingRepository.findFirstByItem_OwnerIdAndIdOrderByStartDesc(anyLong(), anyLong()))
+        when(bookingRepository.findFirstByItem_OwnerIdAndIdOrderByStartDesc(anyLong(), anyLong()))
                 .thenReturn(Optional.empty());
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(item));
-        Mockito
-                .when(commentRepository.findAllByItemId(anyLong()))
+        when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(Collections.emptyList());
 
         List<ItemBookingCommentDto> itemsFound = itemService.getItemsByUserId(1L);
@@ -251,10 +230,9 @@ class ItemServiceImplTest {
 
     @Test
     void search() {
-        Mockito
-                .when(itemRepository
-                        .findAllByNameContainingIgnoreCaseAndIsAvailableTrueOrDescriptionContainingIgnoreCaseAndAndIsAvailableTrue(
-                                anyString(), anyString()))
+        when(itemRepository
+                .findAllByNameContainingIgnoreCaseAndIsAvailableTrueOrDescriptionContainingIgnoreCaseAndAndIsAvailableTrue(
+                        anyString(), anyString()))
                 .thenReturn(Set.of(item));
 
         Set<ItemDto> items = itemService.search("aw");
@@ -270,18 +248,14 @@ class ItemServiceImplTest {
 
     @Test
     void createComment() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
-                        anyLong(), anyLong(), any()))
+        when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
+                anyLong(), anyLong(), any()))
                 .thenReturn(List.of(booking));
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(item));
-        Mockito
-                .when(commentRepository.save(any(Comment.class)))
+        when(commentRepository.save(any(Comment.class)))
                 .thenReturn(comment);
 
         CommentDto commentSaved = itemService.createComment(commentDto, 1L, 1L);
@@ -292,12 +266,10 @@ class ItemServiceImplTest {
 
     @Test
     void createCommentFailNoBooking() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
-                        anyLong(), anyLong(), any()))
+        when(bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
+                anyLong(), anyLong(), any()))
                 .thenReturn(Collections.emptyList());
 
         final UnavailableBookingException exception = Assertions.assertThrows(
@@ -309,11 +281,9 @@ class ItemServiceImplTest {
 
     @Test
     void getAllByItemId() {
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(item));
-        Mockito
-                .when(commentRepository.findAllByItemId(anyLong()))
+        when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(List.of(comment));
 
         List<Comment> comments = itemService.getAllByItemId(1L);
@@ -323,8 +293,7 @@ class ItemServiceImplTest {
 
     @Test
     void getItemById() {
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(item));
 
         Item itemFound = itemService.getItemById(1L);
@@ -338,8 +307,7 @@ class ItemServiceImplTest {
 
     @Test
     void getItemByWringId() {
-        Mockito
-                .when(itemRepository.findById(any(Long.class)))
+        when(itemRepository.findById(any(Long.class)))
                 .thenThrow(new ItemNotFoundException("Item not found - id:  + 99"));
 
         final ItemNotFoundException exception = Assertions.assertThrows(

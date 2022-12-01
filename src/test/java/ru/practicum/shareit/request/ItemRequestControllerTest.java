@@ -28,13 +28,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ItemRequestController.class)
 class ItemRequestControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    ItemRequestService itemRequestService;
-    ItemRequestDto itemRequestDto;
-    ItemRequestDto itemRequestDtoResponse;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm:ss");
-    String created = LocalDateTime.now().plusMinutes(2).format(formatter);
+    private ItemRequestService itemRequestService;
+    private ItemRequestDto itemRequestDto;
+    private ItemRequestDto itemRequestDtoResponse;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm:ss");
+    private final String created = LocalDateTime.now().plusMinutes(2).format(formatter);
     @Autowired
     private MockMvc mvc;
 

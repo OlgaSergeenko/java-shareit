@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -27,9 +28,7 @@ public class ItemController {
                                           @RequestHeader("X-Sharer-User-Id") Long userId) {
         ItemDto itemSaved = itemService.create(itemDto, userId);
         log.info(String.format("Item with id %d is created", itemSaved.getId()));
-        if (itemDto.getRequestId() != null) {
-            itemSaved.setRequestId(itemDto.getRequestId());
-        }
+        Optional.ofNullable(itemDto.getRequestId()).ifPresent(itemSaved::setRequestId);
         return ResponseEntity.ok(itemSaved);
     }
 

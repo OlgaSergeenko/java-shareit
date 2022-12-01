@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.comments.CommentDto;
 import ru.practicum.shareit.item.dto.ItemBookingCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.item.service.ItemService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -30,11 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ItemControllerTest {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    ItemServiceImpl itemService;
-    ItemDto itemDto;
-    ItemDto itemDto2;
+    private ItemService itemService;
+    private ItemDto itemDto;
+    private ItemDto itemDto2;
     @Autowired
     private MockMvc mvc;
 

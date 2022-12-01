@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
@@ -93,14 +93,11 @@ class BookingServiceImplTest {
 
     @Test
     void create() {
-        Mockito
-                .when(itemService.getItemById(any(Long.class)))
+        when(itemService.getItemById(any(Long.class)))
                 .thenReturn(item);
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.save(any(Booking.class)))
+        when(bookingRepository.save(any(Booking.class)))
                 .thenReturn(booking);
 
         BookingDto bookingSaved = bookingService.create(bookingRequestDto, 2L);
@@ -115,8 +112,7 @@ class BookingServiceImplTest {
 
     @Test
     void createBookingByOwnerFail() {
-        Mockito
-                .when(itemService.getItemById(any(Long.class)))
+        when(itemService.getItemById(any(Long.class)))
                 .thenReturn(item);
 
         final BookingNotFoundException exception = Assertions.assertThrows(
@@ -129,8 +125,7 @@ class BookingServiceImplTest {
     @Test
     void createBookingWhenUnavailable() {
         item.setIsAvailable(false);
-        Mockito
-                .when(itemService.getItemById(any(Long.class)))
+        when(itemService.getItemById(any(Long.class)))
                 .thenReturn(item);
 
         final UnavailableBookingException exception = Assertions.assertThrows(
@@ -150,12 +145,10 @@ class BookingServiceImplTest {
                 .booker(booker)
                 .status(BookingStatus.APPROVED)
                 .build();
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.ofNullable(booking));
 
-        Mockito
-                .when(bookingRepository.save(any(Booking.class)))
+        when(bookingRepository.save(any(Booking.class)))
                 .thenReturn(bookingApproved);
 
         BookingDto bookingWithStatus = bookingService.setBookingStatus(1L, 1L, true);
@@ -178,12 +171,10 @@ class BookingServiceImplTest {
                 .booker(booker)
                 .status(BookingStatus.REJECTED)
                 .build();
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.ofNullable(booking));
 
-        Mockito
-                .when(bookingRepository.save(any(Booking.class)))
+        when(bookingRepository.save(any(Booking.class)))
                 .thenReturn(bookingRejected);
 
         BookingDto bookingWithStatus = bookingService.setBookingStatus(1L, 1L, false);
@@ -198,8 +189,7 @@ class BookingServiceImplTest {
 
     @Test
     void failSetBookingStatusBookingNotFound() {
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.empty());
 
         final BookingNotFoundException exception = Assertions.assertThrows(
@@ -211,8 +201,7 @@ class BookingServiceImplTest {
 
     @Test
     void failSetBookingStatusByBooker() {
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(booking));
 
         final BookingNotFoundException exception = Assertions.assertThrows(
@@ -225,8 +214,7 @@ class BookingServiceImplTest {
     @Test
     void failSetBookingStatusWhenAlreadyApproved() {
         booking.setStatus(BookingStatus.APPROVED);
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(booking));
 
         final UnavailableBookingException exception = Assertions.assertThrows(
@@ -238,8 +226,7 @@ class BookingServiceImplTest {
 
     @Test
     void getById() {
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(booking));
 
         BookingDto bookingFound = bookingService.getById(1L, 1L);
@@ -254,8 +241,7 @@ class BookingServiceImplTest {
 
     @Test
     void failGetByIdNotFound() {
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.empty());
 
         final BookingNotFoundException exception = Assertions.assertThrows(
@@ -267,8 +253,7 @@ class BookingServiceImplTest {
 
     @Test
     void failGetByIdWrongUser() {
-        Mockito
-                .when(bookingRepository.findById(any(Long.class)))
+        when(bookingRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(booking));
 
         final BookingNotFoundException exception = Assertions.assertThrows(
@@ -280,11 +265,9 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateAll() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong()))
+        when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, BookingState.ALL);
@@ -295,13 +278,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateCurrent() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository
-                        .findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                                anyLong(), any(), any()))
+        when(bookingRepository
+                .findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                        anyLong(), any(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, BookingState.CURRENT);
@@ -312,12 +293,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStatePast() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, BookingState.PAST);
@@ -328,12 +307,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateFuture() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, BookingState.FUTURE);
@@ -344,12 +321,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateWaiting() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, BookingState.WAITING);
@@ -360,12 +335,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByUserIdWithStateRejected() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, BookingState.REJECTED);
@@ -376,8 +349,7 @@ class BookingServiceImplTest {
 
     @Test
     void failfindAllByUserIdWithStateUnsupported() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
 
         final UnsupportedStatusException exception = Assertions.assertThrows(
@@ -389,11 +361,9 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateAll() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(anyLong()))
+        when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(anyLong()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, BookingState.ALL);
@@ -404,13 +374,11 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateCurrent() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository
-                        .findAllByItem_OwnerIdAndStartLessThanEqualAndEndGreaterThanOrderByStart(
-                                anyLong(), any(), any()))
+        when(bookingRepository
+                .findAllByItem_OwnerIdAndStartLessThanEqualAndEndGreaterThanOrderByStart(
+                        anyLong(), any(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, BookingState.CURRENT);
@@ -421,12 +389,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStatePast() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByItem_OwnerIdAndEndLessThanEqual(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByItem_OwnerIdAndEndLessThanEqual(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, BookingState.PAST);
@@ -437,12 +403,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateFuture() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByItem_OwnerIdAndStartGreaterThanEqualOrderByStartDesc(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByItem_OwnerIdAndStartGreaterThanEqualOrderByStartDesc(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, BookingState.FUTURE);
@@ -453,12 +417,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateWaiting() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByItem_OwnerIdAndStatusOrderByStart(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByItem_OwnerIdAndStatusOrderByStart(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, BookingState.WAITING);
@@ -469,12 +431,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByOwnerIdWithStateRejected() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
-        Mockito
-                .when(bookingRepository.findAllByItem_OwnerIdAndStatus(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByItem_OwnerIdAndStatus(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, BookingState.REJECTED);
@@ -485,8 +445,7 @@ class BookingServiceImplTest {
 
     @Test
     void failFindAllByOwnerIdWithStateUnsupported() {
-        Mockito
-                .when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
+        when(userService.findUserIfExistOrElseThrowNotFound(any(Long.class)))
                 .thenReturn(userDto);
 
         final UnsupportedStatusException exception = Assertions.assertThrows(
@@ -498,9 +457,8 @@ class BookingServiceImplTest {
 
     @Test
     void testFindAllByUserId() {
-        Mockito
-                .when(bookingRepository.findAllByBookerIdOrderByStartDesc(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByBookerIdOrderByStartDesc(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByUserId(1L, 0, 1);
@@ -511,9 +469,8 @@ class BookingServiceImplTest {
 
     @Test
     void testFindAllByOwnerId() {
-        Mockito
-                .when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(
-                        anyLong(), any()))
+        when(bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(
+                anyLong(), any()))
                 .thenReturn(List.of(booking));
 
         List<BookingDto> bookings = bookingService.findAllByOwnerId(1L, 0, 1);

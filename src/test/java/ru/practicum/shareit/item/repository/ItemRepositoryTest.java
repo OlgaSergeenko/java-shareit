@@ -32,24 +32,13 @@ import static org.hamcrest.Matchers.equalTo;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ItemRepositoryTest {
     private final EntityManager em;
-
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-
-    ItemDto itemDto;
-    UserDto userDto;
-    User user;
-    Item item;
-    ItemRequest itemRequest;
+    private User user;
 
     @BeforeEach
     void setUp() {
         user = new User(null, "Olga", "Olga@email.com");
-        userDto = new UserDto(1L, "Olga", "Olga@email.com");
-        item = new Item(1L, "saw", "big power", true, user, itemRequest);
-        itemDto = new ItemDto(1L, "saw", "big power", true, new UserDto(
-                1L, "Olga", "Olga@email.com"), 1L);
-        itemRequest = new ItemRequest(1L, "text", null, null, null);
     }
 
     @Test

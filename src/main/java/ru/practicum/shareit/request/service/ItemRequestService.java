@@ -1,11 +1,9 @@
 package ru.practicum.shareit.request.service;
 
-import org.springframework.stereotype.Service;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.util.List;
 
-@Service
 public interface ItemRequestService {
 
     ItemRequestDto create(ItemRequestDto itemRequestDto, Long userId);
