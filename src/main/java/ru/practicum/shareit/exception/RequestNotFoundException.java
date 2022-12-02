@@ -3,10 +3,10 @@ package ru.practicum.shareit.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class DuplicateEmailException extends RuntimeException {
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class RequestNotFoundException extends RuntimeException {
 
-    public DuplicateEmailException(String message) {
+    public RequestNotFoundException(final String message) {
         super(message);
     }
 }

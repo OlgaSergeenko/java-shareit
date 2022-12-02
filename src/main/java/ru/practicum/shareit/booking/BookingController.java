@@ -3,15 +3,19 @@ package ru.practicum.shareit.booking;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.enumerated.BookingState;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 
+@Validated
 @RestController
 @RequestMapping(path = "/bookings")
 @AllArgsConstructor
@@ -45,14 +49,24 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<List<BookingDto>> findAllByUserId(
             @RequestParam(required = false, defaultValue = "ALL") BookingState state,
-            @RequestHeader("X-Sharer-User-Id") long userId) {
-        return ResponseEntity.ok(bookingService.findAllByUserId(userId, state));
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestParam(required = false) @PositiveOrZero Integer from,
+            @RequestParam(required = false) @Positive Integer size) {
+        if (from == null && size == null) {
+            return ResponseEntity.ok(bookingService.findAllByUserId(userId, state));
+        }
+        return ResponseEntity.ok(bookingService.findAllByUserId(userId, from, size));
     }
 
     @GetMapping("/owner")
     public ResponseEntity<List<BookingDto>> findAllByOwnerId(
             @RequestParam(required = false, defaultValue = "ALL") BookingState state,
-            @RequestHeader("X-Sharer-User-Id") long userId) {
-        return ResponseEntity.ok(bookingService.findAllByOwnerId(userId, state));
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestParam(required = false) @PositiveOrZero Integer from,
+            @RequestParam(required = false) @Positive Integer size) {
+        if (from == null && size == null) {
+            return ResponseEntity.ok(bookingService.findAllByOwnerId(userId, state));
+        }
+        return ResponseEntity.ok(bookingService.findAllByOwnerId(userId, from, size));
     }
 }

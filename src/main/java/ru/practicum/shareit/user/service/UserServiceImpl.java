@@ -25,11 +25,11 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toDto(userRepository.save(user));
     }
 
-    public UserDto update(UserDto userDto, Long id) {
+    public UserDto update(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        Optional<User> userToUpdate = userRepository.findById(id);
+        Optional<User> userToUpdate = userRepository.findById(userDto.getId());
         if (userToUpdate.isEmpty()) {
-            log.error(String.format("No user with id %d is found to update", id));
+            log.error(String.format("No user with id %d is found to update", userDto.getId()));
             throw new UserNotFoundException("User is not found");
         }
 
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toDto(userRepository.save(userToUpdate.get()));
     }
 
-    public UserDto findById(Long userId) {
+    public UserDto getById(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             log.error(String.format("No user with id %d is found", userId));
@@ -58,6 +58,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto findUserIfExistOrElseThrowNotFound(Long userId) {
-        return findById(userId);
+        return getById(userId);
     }
 }

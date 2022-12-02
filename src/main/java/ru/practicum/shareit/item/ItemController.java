@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.comments.CommentDto;
 import ru.practicum.shareit.item.dto.ItemBookingCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -20,13 +21,14 @@ import java.util.Set;
 @Slf4j
 public class ItemController {
 
-    private final ItemServiceImpl itemService;
+    private ItemService itemService;
 
     @PostMapping
     public ResponseEntity<ItemDto> create(@Valid @RequestBody ItemDto itemDto,
                                           @RequestHeader("X-Sharer-User-Id") Long userId) {
         ItemDto itemSaved = itemService.create(itemDto, userId);
         log.info(String.format("Item with id %d is created", itemSaved.getId()));
+        Optional.ofNullable(itemDto.getRequestId()).ifPresent(itemSaved::setRequestId);
         return ResponseEntity.ok(itemSaved);
     }
 

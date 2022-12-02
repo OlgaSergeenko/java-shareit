@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -12,12 +12,13 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemDto {
-    private long id;
-    @NotEmpty
+    private Long id;
+    @NotEmpty (message = "description should not be empty")
     private String name;
-    @NotNull
+    @NotNull (message = "description should not be null")
     private String description;
-    @NotNull
+    @NotNull (message = "availability should not be null")
     private Boolean available;
-    private User owner;
+    private UserDto owner;
+    private Long requestId;
 }

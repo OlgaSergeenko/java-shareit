@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -20,32 +22,45 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserServiceImpl;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Getter
+@Setter
 @AllArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemRepository itemRepository;
-    private final UserServiceImpl userService;
-    private final BookingRepository bookingRepository;
-    private final CommentRepository commentRepository;
+    private ItemRepository itemRepository;
+    private UserService userService;
+    private BookingRepository bookingRepository;
+    private CommentRepository commentRepository;
+    private ItemRequestRepository itemRequestRepository;
 
     @Override
     public ItemDto create(ItemDto itemDto, Long userId) {
         UserDto userDto = userService.findUserIfExistOrElseThrowNotFound(userId);
-        User user = UserMapper.toUser(userDto);
-        Item item = ItemMapper.toItem(itemDto);
-        item.setOwner(user);
-        return ItemMapper.toDto(itemRepository.save(item));
+        itemDto.setOwner(userDto);
+        Long requestId = itemDto.getRequestId();
+        if (requestId == null) {
+            Item item = ItemMapper.toItemWithNORequest(itemDto);
+            Item itemSaved = itemRepository.save(item);
+            return ItemMapper.toDto(itemSaved);
+        }
+        Item item = ItemMapper.toItemWithRequest(itemDto);
+        Optional<ItemRequest> request = itemRequestRepository.findById(requestId);
+        request.ifPresent(item::setItemRequest);
+        Item itemSaved = itemRepository.save(item);
+        return ItemMapper.toDto(itemSaved);
     }
 
     @Override
@@ -70,7 +85,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = getItemById(itemId);
         BookingShortDto lastBooking = null;
         BookingShortDto nextBooking = null;
-        Optional<Booking> last = bookingRepository.findFirstByItem_Owner_IdAndAndItem_IdOrderByStart(userId, itemId);
+        Optional<Booking> last = bookingRepository.findFirstByItem_Owner_IdAndItem_IdOrderByStart(userId, itemId);
         if (last.isPresent()) {
             lastBooking = BookingMapper.toShortDto(last.get());
         }
@@ -79,11 +94,15 @@ public class ItemServiceImpl implements ItemService {
             nextBooking = BookingMapper.toShortDto(next.get());
         }
 
-        List<CommentDto> comments = getAllByItemId(itemId).stream()
+        List<Comment> comments = getAllByItemId(itemId);
+        if (comments.isEmpty()) {
+            return ItemMapper.toBookingCommentDto(item, lastBooking, nextBooking, Collections.emptyList());
+        }
+        List<CommentDto> commentsDto = comments.stream()
                 .map(CommentMapper::toDto)
                 .collect(Collectors.toList());
 
-        return ItemMapper.toBookingCommentDto(item, lastBooking, nextBooking, comments);
+        return ItemMapper.toBookingCommentDto(item, lastBooking, nextBooking, commentsDto);
     }
 
     @Override
@@ -97,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
         for (Item item : items) {
             BookingShortDto lastBooking = null;
             BookingShortDto nextBooking = null;
-            Optional<Booking> last = bookingRepository.findFirstByItem_Owner_IdAndAndItem_IdOrderByStart(userId, item.getId());
+            Optional<Booking> last = bookingRepository.findFirstByItem_Owner_IdAndItem_IdOrderByStart(userId, item.getId());
             Optional<Booking> next = bookingRepository.findFirstByItem_OwnerIdAndIdOrderByStartDesc(userId, item.getId());
             if (last.isPresent()) {
                 lastBooking = BookingMapper.toShortDto(last.get());
@@ -105,13 +124,16 @@ public class ItemServiceImpl implements ItemService {
             if (next.isPresent()) {
                 nextBooking = BookingMapper.toShortDto(next.get());
             }
-            List<CommentDto> comments = getAllByItemId(item.getId()).stream()
-                    .map(CommentMapper::toDto)
-                    .collect(Collectors.toList());
-
-            itemsWithBooking.add(ItemMapper.toBookingCommentDto(item, lastBooking, nextBooking, comments));
+            List<Comment> comments = getAllByItemId(item.getId());
+            if (comments.isEmpty()) {
+                itemsWithBooking.add(ItemMapper.toBookingCommentDto(item, lastBooking, nextBooking, null));
+            } else {
+                List<CommentDto> commentsDto = comments.stream()
+                        .map(CommentMapper::toDto)
+                        .collect(Collectors.toList());
+                itemsWithBooking.add(ItemMapper.toBookingCommentDto(item, lastBooking, nextBooking, commentsDto));
+            }
         }
-
         return itemsWithBooking;
     }
 
@@ -132,7 +154,7 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {
         UserDto userDto = userService.findUserIfExistOrElseThrowNotFound(userId);
         User user = UserMapper.toUser(userDto);
-        List<Booking> bookings = bookingRepository.findAllByItemIdAndAndBooker_IdAndEndBefore(
+        List<Booking> bookings = bookingRepository.findAllByItemIdAndBooker_IdAndEndBefore(
                 itemId, userId, LocalDateTime.now());
         if (bookings.isEmpty() || commentDto.getText().isEmpty()) {
             throw new UnavailableBookingException("User cannot leave a comment without booking");
