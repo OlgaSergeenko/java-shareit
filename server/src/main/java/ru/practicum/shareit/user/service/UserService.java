@@ -14,7 +14,7 @@ public interface UserService {
 
     List<UserDto> getAll();
 
-    void removeUser(long id);
+    long removeUser(long id);
 
     UserDto findUserIfExistOrElseThrowNotFound(Long userId);
 }

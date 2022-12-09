@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Validated
@@ -23,7 +20,7 @@ public class ItemRequestController {
     private final ItemRequestService requestService;
 
     @PostMapping
-    public ResponseEntity<ItemRequestDto> create(@Valid @RequestBody ItemRequestDto itemRequestDto,
+    public ResponseEntity<ItemRequestDto> create(@RequestBody ItemRequestDto itemRequestDto,
                                                  @RequestHeader("X-Sharer-User-Id") Long userId) {
         ItemRequestDto requestDtoSaved = requestService.create(itemRequestDto, userId);
         log.info(String.format("Request with id %d is created", requestDtoSaved.getId()));
@@ -38,8 +35,8 @@ public class ItemRequestController {
     @GetMapping("/all")
     public ResponseEntity<List<ItemRequestDto>> getAllRequestsByPages(
             @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(required = false, defaultValue = "20") @Positive Integer size) {
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "20") Integer size) {
         return ResponseEntity.ok(requestService.findAllByRequestorIdNot(userId, from, size));
     }
 

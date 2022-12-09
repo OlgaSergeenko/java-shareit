@@ -53,9 +53,10 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    public void removeUser(long id) {
+    public long removeUser(long id) {
         log.info("Remove user from repository {}", id);
         userRepository.deleteById(id);
+        return id;
     }
 
     public UserDto findUserIfExistOrElseThrowNotFound(Long userId) {
