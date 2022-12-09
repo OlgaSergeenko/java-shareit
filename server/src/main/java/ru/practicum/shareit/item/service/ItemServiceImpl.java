@@ -134,7 +134,8 @@ public class ItemServiceImpl implements ItemService {
                 itemsWithBooking.add(ItemMapper.toBookingCommentDto(item, lastBooking, nextBooking, commentsDto));
             }
         }
-        return itemsWithBooking;
+        return itemsWithBooking.stream()
+                .sorted((o1, o2) -> (int) (o1.getId() - o2.getId())).collect(Collectors.toList());
     }
 
     @Override
