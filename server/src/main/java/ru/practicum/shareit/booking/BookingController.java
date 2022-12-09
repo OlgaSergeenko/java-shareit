@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.enumerated.BookingState;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -66,4 +65,5 @@ public class BookingController {
             return ResponseEntity.ok(bookingService.findAllByOwnerId(userId, state));
         }
         return ResponseEntity.ok(bookingService.findAllByOwnerId(userId, from, size));
-    }}
+    }
+}

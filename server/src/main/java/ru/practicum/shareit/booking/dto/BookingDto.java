@@ -5,8 +5,6 @@ import ru.practicum.shareit.enumerated.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.user.dto.UserShortDto;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
