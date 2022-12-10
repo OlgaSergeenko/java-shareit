@@ -42,7 +42,7 @@ public class ItemController {
         return itemClient.updateItem(userId, itemId, itemDto);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Object> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Getting item for userID={}", userId);
         return itemClient.getItemByUserId(userId);
